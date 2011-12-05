@@ -49,6 +49,7 @@ def usage():
 	print "\nSpecific switches for the 'tile' mode (-m tile):"
 	print "-a, --AlbumSize: [130] size of the albums, in pixel."
 	print "-s, --Interspace: [5]  space between in tile, in pixel."
+	print "-w, --Sort: [no]  whether to sort albums by popularity."
 
 	print "\nSpecific switches for the 'glass' mode (-m glass):"
 	print "-n, --AlbumNumber: [7] number of albums to show."
@@ -98,6 +99,7 @@ def getParameters():
 	Tile=dict()
 	Tile['AlbumSize']=130
 	Tile['Interspace']=5
+	Tile['Sort']='no'
 
 	# Glass
 	Glass=dict()
@@ -106,7 +108,7 @@ def getParameters():
 	Glass['EndPoint']=75
 
 	try:
-		optlist, args=getopt(sys.argv[1:], 'hu:t:n:c:f:a:o:g:O:i:m:p:s:e:d:r:x:l',["help", "Mode=", "Username=", "Past=", "Filename=","CanvasSize=", "ImageSize=", "FinalOpacity=", "AlbumSize=","AlbumOpacity=","GradientSize=", "Passes=", "AlbumNumber=", "Interspace=","Cache=","Offset=","EndPoint=","ExcludedList=","Local"])
+		optlist, args=getopt(sys.argv[1:], 'hu:t:n:c:f:a:o:g:O:i:m:p:s:w:e:d:r:x:l',["help", "Mode=", "Username=", "Past=", "Filename=","CanvasSize=", "ImageSize=", "FinalOpacity=", "AlbumSize=","AlbumOpacity=","GradientSize=", "Passes=", "AlbumNumber=", "Interspace=","Sort=","Cache=","Offset=","EndPoint=","ExcludedList=","Local"])
 	except Exception, err:
 		print "#"*20
 		print str(err)
@@ -172,6 +174,8 @@ def getParameters():
 		
 		elif option in ('-r','--Offset'):			# r: Offset (Glass)
 			Glass['Offset']=int(value)
+		elif option in ('-w','--Sort'):				# t: Sort (Tile)
+			Tile['Sort']=int(value)
 	
 
 		else:
@@ -288,7 +292,7 @@ def getAlbumCovers(Username='Koant',Past='overall',cache='wp_cache',ExcludedList
 ##############################
 ## Tile
 ##############################
-def Tile(Profile,ImageSize=(1280,1024),CanvasSize=(1280,1024),AlbumSize=130,FinalOpacity=30,Interspace=5):
+def Tile(Profile,ImageSize=(1280,1024),CanvasSize=(1280,1024),AlbumSize=130,FinalOpacity=30,Interspace=5,Sort='no'):
 	""" produce a tiling of albums covers """
 
 	imagex,imagey=ImageSize
@@ -315,10 +319,13 @@ def Tile(Profile,ImageSize=(1280,1024),CanvasSize=(1280,1024),AlbumSize=130,Fina
 		posx,posy=(-AlbumSize+(canvasx-nx*(AlbumSize+Interspace)-Interspace)/2,posy+Interspace+AlbumSize) # location of album in the canvas
 		for i in range(0,nx):
 			posx=posx+Interspace+AlbumSize
-			if len(filelist2)==0: # better than random.choice() (minimises risk of doubles and goes through the whole list) 
-				filelist2=list(filelist)
-				random.shuffle(filelist2)
-			imfile=filelist2.pop()
+			if Sort=='no':
+				if len(filelist2)==0: # better than random.choice() (minimises risk of doubles and goes through the whole list) 
+					filelist2=list(filelist)
+					random.shuffle(filelist2)
+				imfile=filelist2.pop()
+			else:
+				imfile=filelist.pop()
 			try:
 				im=Image.open(imfile).convert('RGB')
 			except Exception,err:
