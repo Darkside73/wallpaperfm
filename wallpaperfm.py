@@ -319,13 +319,11 @@ def Tile(Profile,ImageSize=(1280,1024),CanvasSize=(1280,1024),AlbumSize=130,Fina
 		posx,posy=(-AlbumSize+(canvasx-nx*(AlbumSize+Interspace)-Interspace)/2,posy+Interspace+AlbumSize) # location of album in the canvas
 		for i in range(0,nx):
 			posx=posx+Interspace+AlbumSize
-			if Sort=='no':
-				if len(filelist2)==0: # better than random.choice() (minimises risk of doubles and goes through the whole list) 
-					filelist2=list(filelist)
+			if len(filelist2)==0: # better than random.choice() (minimises risk of doubles and goes through the whole list) 
+				filelist2=list(filelist)
+				if Sort=='no':
 					random.shuffle(filelist2)
-				imfile=filelist2.pop()
-			else:
-				imfile=filelist.pop()
+			imfile=filelist2.pop()
 			try:
 				im=Image.open(imfile).convert('RGB')
 			except Exception,err:
