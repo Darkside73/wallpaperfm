@@ -175,7 +175,7 @@ def getParameters():
 		elif option in ('-r','--Offset'):			# r: Offset (Glass)
 			Glass['Offset']=int(value)
 		elif option in ('-w','--Sort'):				# t: Sort (Tile)
-			Tile['Sort']=int(value)
+			Tile['Sort']=value
 	
 
 		else:
